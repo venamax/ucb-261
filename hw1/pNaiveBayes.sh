@@ -55,6 +55,8 @@ countfiles=`\ls $data.chunk.*.counts | perl -pe 's/\n/ /'`
 ./reducer.py $countfiles > $data.output
 ####
 ####
-
+numOfInstances=$(cat $data.output)
+echo "NB Classifier based on word(s): $wordlist" ## Print out words 
+echo "$numOfInstances" ## Print out output data
 ## clean up the data chunks and temporary count files
 \rm $data.chunk.*

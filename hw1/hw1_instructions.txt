@@ -1,7 +1,7 @@
 =====DATSCIW261 ASSIGNMENT #1=====
 
 MIDS UC Berkeley, Machine Learning at Scale
-DATSCIW261 ASSIGNMENT #1
+DATSCIW261 ASSIGNMENT #1  (version 2016-01-14)
 
 ---------------
 === INSTRUCTIONS for SUBMISSIONS ===
@@ -30,6 +30,8 @@ on its own training data (unlike a field application where one would use non-ove
 The data you will use is a curated subset of the Enron email corpus
 (whose details you may find in the file enronemail_README.txt 
 in the directory surrounding these instructions).
+
+NOTE: please use the subject field and the body field for all your Naive Bayes modeling.
 
 =====Instructions/Goals=====
 
@@ -72,15 +74,47 @@ HW1.2. Provide a mapper/reducer pair that, when executed by pNaiveBayes.sh
    - reducer.py collates the counts of the single word.
 
 CROSSCHECK: >grep assistance enronemail_1h.txt|cut -d$'\t' -f4| grep assistance|wc -l
-       8
+       8   #"assistance" occurs on 8 lines but how many times does the token occur? 10 times! This is the number we are looking for!
+
+
+See example in: http://nbviewer.ipython.org/urls/dl.dropbox.com/s/ujz9w7d2a73b80o/DivideAndConquer2-python-Incomplete.ipynb
+See video section 1.12.1 1.12.1 Poor Man's MapReduce Using Command Line (Part 2) located at: 
+https://learn.datascience.berkeley.edu/mod/page/view.php?id=10961
+NOTE in your python notebook create a cell to save your mapper/reducer to disk using magic commands (see example here)
+%%writefile mapper.py
+#!/usr/bin/python
+## mapper.py
+## Author: XYZ
+## Description: mapper code for HW1.2-1.5
+
+import sys
+import re
+count = 0
+
+## collect user input
+filename = sys.argv[1]
+findwords = re.split(" ",sys.argv[2].lower())
+..........
+
+
+In the next cell use the following to change the permissions of the mapper/reducer using the following commands.
+
+!chmod +x mapper.py; chmod +x reducer.py
+
+
 
 HW1.3. Provide a mapper/reducer pair that, when executed by pNaiveBayes.sh
-   will classify the email messages by a single, user-specified word using the Naive Bayes Formulation. Examine the word “assistance” and report your results. To do so, make sure that
+   will classify the email messages by a single, user-specified word using the multinomial Naive Bayes Formulation. Examine the word “assistance” and report your results. To do so, make sure that
    
    - mapper.py and
    - reducer.py 
 
-   that performs a single word Naive Bayes classification.
+   that performs a single word Naive Bayes classification. For multinomial Naive Bayes, the Pr(X=“assistance”|Y=SPAM) is calculated as follows:
+
+   the number of times “assistance” occurs in SPAM labeled documents / the number of words in documents labeled SPAM 
+
+   NOTE if  “assistance” occurs 5 times in all of the documents Labeled SPAM, and the length in terms of the number of words in all documents labeld as SPAM (when concatenated) is 1,000. Then Pr(X=“assistance”|Y=SPAM) = 5/1000. Note this is a multinomial estimated of the class conditional for a Naive Bayes Classifier.
+
 
 HW1.4. Provide a mapper/reducer pair that, when executed by pNaiveBayes.sh
    will classify the email messages by a list of one or more user-specified words. Examine the words “assistance”, “valium”, and “enlargementWithATypo” and report your results
@@ -89,7 +123,7 @@ HW1.4. Provide a mapper/reducer pair that, when executed by pNaiveBayes.sh
    - mapper.py counts all occurrences of a list of words, and
    - reducer.py 
 
-   performs the multiple-word Naive Bayes classification via the chosen list.
+   performs the multiple-word multinomial Naive Bayes classification via the chosen list.
 
 
 
@@ -131,9 +165,9 @@ or the recording of this week's live lecture that you will find on the LMS.
 
 HW1.6 IS NEW as of 2015/09/03  
 
-HW1.6 Benchmark your code with the Python SciKit-Learn implementation of Naive Bayes
+HW1.6 Benchmark your code with the Python SciKit-Learn implementation of multinomial Naive Bayes
 
-It always a good idea to test your solutions against publicly available libraries such as SciKit-Learn, The Machine Learning toolkit available in Python. In this exercise, we benchmark ourselves against the SciKit-Learn implementation of Naive Bayes.  For more information on this implementation see: http://scikit-learn.org/stable/modules/naive_bayes.html more  
+It always a good idea to test your solutions against publicly available libraries such as SciKit-Learn, The Machine Learning toolkit available in Python. In this exercise, we benchmark ourselves against the SciKit-Learn implementation of multinomial Naive Bayes.  For more information on this implementation see: http://scikit-learn.org/stable/modules/naive_bayes.html more  
 
 Lets define  Training error = misclassification rate with respect to a training set. It is more formally defined here:
 
@@ -148,7 +182,7 @@ In this exercise, please complete the following:
 — Run the Bernoulli Naive Bayes algorithm from SciKit-Learn (using default settings) over the same training data used in HW1.5 and report the Training error 
 — Run the Multinomial Naive Bayes algorithm you developed for HW1.5 over the same data used HW1.5 and report the Training error 
 - Please prepare a table to present your results
-— Explain/justify any differences in terms of training error rates over the dataset in HW1.5 between your Multinomial Naive Bayes implementation (in Map Reduce) versus the Multinomial Naive Bayes implementation in SciKit-Learn
+— Explain/justify any differences in terms of training error rates over the dataset in HW1.5 between your Multinomial Naive Bayes implementation (in Map Reduce) versus the Multinomial Naive Bayes implementation in SciKit-Learn (Hint: smoothing, which we will discuss in next lecture)
 - Discuss the performance differences in terms of training error rates over the dataset in HW1.5 between the  Multinomial Naive Bayes implementation in SciKit-Learn with the  Bernoulli Naive Bayes implementation in SciKit-Learn
 
 
