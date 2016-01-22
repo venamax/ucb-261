@@ -26,7 +26,6 @@ def word_preprocessor(s):                                  ### This function eli
                    '#',
                     ' ',
                     'ly',
-                     's',
                      '%',
                      '_',
                      "'",

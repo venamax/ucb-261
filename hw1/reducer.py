@@ -63,10 +63,10 @@ sum_spam_records = len(spam_unique_ids)
 sum_ham_records = len(ham_unique_ids)
 
 
-prior_spam = float(sum_spam_records)/float(sum_records)     ## prior prob of a spam email
-prior_ham = float(sum_ham_records)/float(sum_records)       ## prior prob of a ham email
+prior_spam = float(sum_spam_records)/sum_records     ## prior prob of a spam email
+prior_ham = float(sum_ham_records)/sum_records       ## prior prob of a ham email
 
-spam_wordcount, ham_wordcount = [], []
+spam_wordcount, ham_wordcount = {}, {}
 for term in vocabulary:
     count = 0
     for word in spam_list:
@@ -76,7 +76,7 @@ for term in vocabulary:
     count_tuple = {
         term:count
     }
-    spam_wordcount.append(count_tuple)
+    spam_wordcount.update(count_tuple)
     
     count = 0
     for word in ham_list:
@@ -86,10 +86,9 @@ for term in vocabulary:
     count_tuple = {
         term: count
     }
-    ham_wordcount.append(count_tuple)
+    ham_wordcount.update(count_tuple)
 
-      
-
+            
 records = sorted(record_list, key=lambda record: record[2])
 
 
@@ -99,26 +98,42 @@ print '%4s'%sum_records ,'emails examined, containing %6s'%sum_words, ' words us
 
 print '%30s' %'ID', '%10s' %'TRUTH', '%10s' %'CLASS','%20s' %'CUMULATIVE ACCURACY'
         
-miss, sample_size = 0,0 
+index, miss, sample_size = 0,0,0
 for email, record in groupby(records, itemgetter(2)):
     cond_prob_spam, cond_prob_ham = 1,1        
     record_item = list(record)
-    for term in vocabulary:
-        count = 0
-        for i in range(len(record_item)):
-            if term == record_item[i][0]:
-                count+= 1
+    if index < 2:
+        print record_item[index]
+        index += 1
+    
+        for term in vocabulary:
+            if term in record_item:
+                count = 0
+                print term,
+                for i in range (len(record_item)):
+                    if term == record_item[i][0]:
+                        count += 1
+                print count
+                if count > 0:
+                    for key,value in spam_wordcount.items():
+                        if key == term:
+                            spam_count = value
+                            print spam_count
+                    for key,value in ham_wordcount.items():
+                        if key == term:
+                            ham_count = value
+                            print ham_count
 
-        if count > 0:
-            spam_count = [d[term] for d in spam_wordcount if term in d][0]
-            ham_count = [d[term] for d in ham_wordcount if term in d][0]
+                cond_prob_spam += count
+                cond_prob_ham += count
+#                cond_prob_spam *= ((float(spam_count)+1)/(float(sum_spam_words)+size_vocabulary))**count
+#                cond_prob_ham *= ((float(ham_count)+1)/(float(sum_ham_words)+size_vocabulary))**count
+        
+    total_cond_prob = cond_prob_ham + cond_prob_spam
+        
 
-            cond_prob_spam *= ((float(spam_count)+1)/(float(sum_spam_words)+size_vocabulary))**count
-            cond_prob_ham *= ((float(ham_count)+1)/(float(sum_ham_words)+size_vocabulary))**count
-        
-        
-    p_spam = prior_spam*cond_prob_spam
-    p_ham = prior_ham*cond_prob_ham
+    p_spam = prior_spam*(cond_prob_spam/(total_cond_prob))
+    p_ham = prior_ham*(cond_prob_ham/(total_cond_prob))
     
     if p_spam > p_ham:
         y_pred = 1
@@ -135,7 +150,7 @@ for email, record in groupby(records, itemgetter(2)):
     sample_size += 1.0
     accuracy = ((sample_size - miss)/sample_size)*100
                 
-    print  '%30s' %record_id, '%10s' %y_true, '%10s' %y_pred, '%18.2f %%' % accuracy
+    print  '%30s' %record_id, '%10s' %y_true, '%10s' %y_pred, '%18.2f %%' % accuracy, '%5.3f'%cond_prob_spam, '%5.3f'%cond_prob_ham
                     
                 
 
