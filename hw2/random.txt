@@ -1,0 +1,8 @@
+import random
+N = 10
+random.seed(0)
+for i in range(N):
+    a = random.randint(0, 1000)
+    b = ''
+    print (a,b)
+    
