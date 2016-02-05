@@ -1,15 +1,24 @@
 #!/usr/bin/python
-from csv import reader
 import sys
+# record mapper invokation
+sys.stderr.write("reporter:counter:custom_counters,mapper_count,1\n")
+max_basket = 0
+num_items = 0
 
 
-for row in reader(iter(sys.stdin.readline, '')):
-    product = row[1].lower()
-    
-    if product=='debt collection' or product == 'mortgage':
-        product = product
-    else:
-        product = 'other'
-    if product:
-        sys.stderr.write("reporter:counter:complaints:,%s,1\n"%product)
-    print ('%s\t%s' % (product, 1))             ### mapper out looks like 'product' \t 1
+# input comes from STDIN
+for line in sys.stdin:
+    line = line.strip().lower()
+    if line == '': continue
+    records = line.split(' ')
+    # record largest basket per mapper
+    if len(records) > max_basket:
+        max_basket = len(records)
+    for product in records:
+        num_items += 1
+        print '%s\t%s' % (product, 1)
+
+# print total word count from this mapper to calculate relative frequency
+print '%s\t%s' % ('*', num_items)
+# print additional meta data for EDA analysis
+print '%s\t%s' % ('max_basket', max_basket)
