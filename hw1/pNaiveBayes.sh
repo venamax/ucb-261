@@ -14,7 +14,6 @@
 
 ## collect user input
 m=$1 ## the number of parallel processes (maps) to run
-wordlist=$2 ## if set to "*", then all words are used
 
 ## a test set data of 100 messages
 data="enronemail_1h.txt" 
@@ -38,7 +37,7 @@ for datachunk in $data.chunk.*; do
     ## feed word list to the python mapper here and redirect STDOUT to a temporary file on disk
     ####
     ####
-    ./mapper.py $datachunk "$wordlist" > $datachunk.counts &
+    ./mapper.py $datachunk > $datachunk.counts &
     ####
     ####
 done
@@ -56,7 +55,7 @@ countfiles=`\ls $data.chunk.*.counts | perl -pe 's/\n/ /'`
 ####
 ####
 numOfInstances=$(cat $data.output)
-echo "NB Classifier based on word(s): $wordlist" ## Print out words 
+echo "NB Classifier" ## Print out words 
 echo "$numOfInstances" ## Print out output data
 ## clean up the data chunks and temporary count files
 \rm $data.chunk.*
