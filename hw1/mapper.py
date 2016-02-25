@@ -51,6 +51,9 @@ with open (filename, "r") as myfile:
                         for keyword in findwords:          ### for each word specified by user
                             if keyword in word:            ### If there's a match then
                                 ham_count += 1             ### add one to the user specified word count as ham
-                    
-
-            print spam_count, " ", spam_words, " ", spam_records, " ", ham_count, " ", ham_words, " ", ham_records, " ", words, " ", records, " ",record[0], " ", record[1]
+            
+            record_id = record[0]
+            truth = record[1]
+            print spam_count, " ", spam_words, " ",  spam_records, " ",  \
+                  ham_count, " ", ham_words, " ",  ham_records, " ", \
+                  words, " ", records, " ",  record_id, " ", truth      

@@ -1,7 +1,7 @@
 #!/usr/bin/python
 ## reducer.py
 ## Author: Alejandro J. Rojas
-## Description: reducer code for HW1.2-1.5
+## Description: reducer code for HW1.3-1.4
 
 import sys
 import re
@@ -38,7 +38,7 @@ prob_word_ham = float(sum_ham_count)/float(sum_ham_words)   ## prob of word give
 sum_count = sum_spam_count+sum_ham_count
 
 print "Summary of Data"
-print '%4s'%sum_records ,'emails examined, containing ', '%6s'%sum_words, 'words, we found ','%3s'%sum_count ,'matches.'
+print '%4s'%sum_records ,'emails examined, containing %6s'%sum_words, 'words, we found %3s'%sum_count ,'matches.'
 
 print '%30s' %'ID', '%10s' %'TRUTH', '%10s' %'CLASS'
 for file in filenames:                                      
